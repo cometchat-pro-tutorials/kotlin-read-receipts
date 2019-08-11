@@ -5,29 +5,42 @@
     android:layout_height="wrap_content"
     android:layout_margin="8dp">
 
-    <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/avatarImageView"
         android:layout_width="@dimen/profile_image_size"
         android:layout_height="@dimen/profile_image_size"
         android:src="@drawable/avatar_placeholder_female"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
-
-    <TextView
-        android:id="@+id/messageTextView"
+    <LinearLayout
+        app:layout_constraintRight_toLeftOf="@id/avatarImageView"
+        app:layout_constraintTop_toTopOf="parent"
+        android:paddingLeft="16dp"
+        android:paddingRight="32dp"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp"
+        android:gravity="right"
+        android:background="@drawable/my_chat_bubble"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/my_chat_bubble"
-        android:gravity="center_vertical"
-        android:maxWidth="250dp"
-        android:padding="8dp"
-        android:paddingEnd="24dp"
-        android:text="Just some placeholder text that has more than one line so we can test  the chat bubble"
-        android:textColor="@android:color/white"
-        android:textSize="14sp"
-        app:layout_constraintHorizontal_bias="0.95"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/avatarImageView"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/messageTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="250dp"
+            android:text="Just some placeholder text that has more than one line so we can test  the chat bubble"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"/>
+        <ImageView
+            android:id="@+id/messageStatusImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:src="@drawable/sent_tick"
+            />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

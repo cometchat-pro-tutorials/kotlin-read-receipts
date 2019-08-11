@@ -12,7 +12,6 @@ import com.cometchat.pro.core.CometChat
 import com.cometchat.pro.core.GroupsRequest
 import com.cometchat.pro.exceptions.CometChatException
 import com.cometchat.pro.models.Group
-import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {

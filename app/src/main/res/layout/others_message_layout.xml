@@ -12,6 +12,16 @@
         android:src="@drawable/avatar_placeholder"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent" />
+    <ImageView
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:visibility="gone"
+        android:id="@+id/messageStatusImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:src="@drawable/sent_tick"
+        />
 
     <TextView
         android:id="@+id/messageTextView"

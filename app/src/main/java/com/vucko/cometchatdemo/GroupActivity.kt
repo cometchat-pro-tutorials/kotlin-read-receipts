@@ -2,7 +2,6 @@ package com.vucko.cometchatdemo
 
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -14,13 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cometchat.pro.constants.CometChatConstants
 import com.cometchat.pro.core.CometChat
-import com.cometchat.pro.core.GroupsRequest
 import com.cometchat.pro.core.MessagesRequest
 import com.cometchat.pro.exceptions.CometChatException
-import com.cometchat.pro.models.BaseMessage
-import com.cometchat.pro.models.Group
-import com.cometchat.pro.models.MediaMessage
-import com.cometchat.pro.models.TextMessage
+import com.cometchat.pro.models.*
 
 class GroupActivity : AppCompatActivity() {
 
@@ -34,7 +29,8 @@ class GroupActivity : AppCompatActivity() {
 
 
     // Some random ID for the listener for now
-    private val listenerID: String = "1234"
+    private val incomingMessageListenerId: String = "1234"
+    private val messageReadReceiptListenerId: String = "999"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,15 +50,15 @@ class GroupActivity : AppCompatActivity() {
         messagesRecyclerView.adapter = messagesAdapter
         messagesRecyclerView.layoutManager = LinearLayoutManager(this)
         noMessagesGroup = findViewById(R.id.noMessagesGroup)
-        messageEditText.setOnEditorActionListener {
-                _, actionId, _ ->
-            if(actionId == EditorInfo.IME_ACTION_SEND){
+        messageEditText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEND) {
                 attemptSendMessage()
                 true
             } else {
                 false
             }
         }
+        registerMessageCallbacks()
     }
 
     private fun getGroupDetailsAndMessages() {
@@ -81,22 +77,46 @@ class GroupActivity : AppCompatActivity() {
             }
         })
         val messagesRequest = MessagesRequest.MessagesRequestBuilder().setGUID(groupId).build()
-        messagesRequest.fetchPrevious(object:CometChat.CallbackListener<List<BaseMessage>>(){
+        messagesRequest.fetchPrevious(object : CometChat.CallbackListener<List<BaseMessage>>() {
             override fun onSuccess(p0: List<BaseMessage>?) {
                 if (!p0.isNullOrEmpty()) {
                     for (baseMessage in p0) {
                         if (baseMessage is TextMessage) {
                             addMessage(baseMessage)
+                            markMessageAsReadIfNeeded(baseMessage)
                         }
                     }
                 }
 
             }
+
             override fun onError(p0: CometChatException?) {
                 Toast.makeText(this@GroupActivity, p0?.message, Toast.LENGTH_SHORT).show()
             }
         })
 
+    }
+
+    private fun registerMessageCallbacks() {
+        CometChat.addMessageListener(messageReadReceiptListenerId, object : CometChat.MessageListener() {
+            override fun onMessageDelivered(messageReceipt: MessageReceipt?) {
+                notifyMessageInfoChanged(messageReceipt, MessageInfo.DELIVERED)
+            }
+
+            override fun onMessageRead(messageReceipt: MessageReceipt?) {
+                notifyMessageInfoChanged(messageReceipt, MessageInfo.READ)
+            }
+        })
+    }
+
+    private fun notifyMessageInfoChanged(messageReceipt: MessageReceipt?, status: MessageInfo) {
+        messagesAdapter.notifyMessageChanged(messageReceipt, status)
+    }
+
+    private fun markMessageAsReadIfNeeded(message: TextMessage?) {
+        if (message?.readAt == 0L && !message.sender.uid.equals(CometChat.getLoggedInUser().uid, ignoreCase = true)) {
+            CometChat.markMessageAsRead(message)
+        }
     }
 
     private fun updateUI() {
@@ -131,16 +151,21 @@ class GroupActivity : AppCompatActivity() {
     private fun addMessage(message: TextMessage?) {
         noMessagesGroup.visibility = View.GONE
         messagesAdapter.addMessage(message)
+        scrollToBottom()
+    }
+
+    private fun scrollToBottom() {
         messagesRecyclerView.smoothScrollToPosition(messagesAdapter.itemCount - 1)
     }
 
     override fun onResume() {
         super.onResume()
         // Add the listener to listen for incoming messages in this screen
-        CometChat.addMessageListener(listenerID, object : CometChat.MessageListener() {
+        CometChat.addMessageListener(incomingMessageListenerId, object : CometChat.MessageListener() {
 
             override fun onTextMessageReceived(message: TextMessage?) {
                 addMessage(message)
+                markMessageAsReadIfNeeded(message)
             }
 
             override fun onMediaMessageReceived(message: MediaMessage?) {
@@ -152,7 +177,7 @@ class GroupActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        CometChat.removeMessageListener(listenerID)
+        CometChat.removeMessageListener(incomingMessageListenerId)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

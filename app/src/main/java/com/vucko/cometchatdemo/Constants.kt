@@ -8,3 +8,8 @@ object GeneralConstants{
     const val MY_MESSAGE: Int = 0
     const val OTHERS_MESSAGE: Int = 1
 }
+
+enum class MessageInfo{
+    DELIVERED,
+    READ
+}
