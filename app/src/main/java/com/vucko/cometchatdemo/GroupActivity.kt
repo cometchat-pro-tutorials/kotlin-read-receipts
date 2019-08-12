@@ -140,7 +140,7 @@ class GroupActivity : AppCompatActivity() {
                 }
 
                 override fun onError(p0: CometChatException?) {
-                    //TODO What if it's not sent
+
                 }
 
             })
