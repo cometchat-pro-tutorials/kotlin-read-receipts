@@ -40,7 +40,7 @@
             android:id="@+id/messageStatusImageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
+            android:layout_gravity="end"
             android:paddingTop="1dp"
             android:src="@drawable/sent_tick"
             app:layout_constraintBottom_toBottomOf="parent"
