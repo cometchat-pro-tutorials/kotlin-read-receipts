@@ -9,16 +9,19 @@
         <item name="colorPrimaryDark">@android:color/white</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
     <style name="AppThemeNoToolbar" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@android:color/white</item>
         <item name="colorPrimaryDark">@android:color/white</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
     <style name="MyEditText" parent="Theme.AppCompat.Light">
         <item name="colorControlHighlight">@color/color_light_blue_darker</item>
         <item name="colorControlActivated">@color/color_light_blue_darker</item>
         <item name="colorControlNormal">@color/color_light_blue_darker</item>
         <item name="android:backgroundTint">@color/color_light_blue_darker</item>
     </style>
+
 </resources>
