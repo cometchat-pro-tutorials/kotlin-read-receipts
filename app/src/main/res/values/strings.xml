@@ -18,5 +18,12 @@
     <string name="create_new_group">Create new group</string>
     <string name="save_group">Save group</string>
     <string name="saving_group">Saving group...</string>
+    <string name="message_info">Message info</string>
+    <string name="this_message_was_read_by">This message was read by </string>
+    <string name="close_dialog">Close dialog</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="no_one_has_read_this_message">None of the group members has read this message.</string>
 
 </resources>

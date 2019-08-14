@@ -2,6 +2,7 @@ package com.vucko.cometchatdemo
 
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -16,9 +17,12 @@ import com.cometchat.pro.core.CometChat
 import com.cometchat.pro.core.MessagesRequest
 import com.cometchat.pro.exceptions.CometChatException
 import com.cometchat.pro.models.*
+import com.vucko.cometchatdemo.fragments.MessageInfoDialogFragment
+import com.vucko.cometchatdemo.interfaces.OnMessageClickListener
 
 class GroupActivity : AppCompatActivity() {
 
+    val TAG = "GroupActivity"
     lateinit var messagesRecyclerView: RecyclerView
     lateinit var messageEditText: EditText
     lateinit var sendButton: ImageButton
@@ -46,7 +50,29 @@ class GroupActivity : AppCompatActivity() {
         }
 
         getGroupDetailsAndMessages()
-        messagesAdapter = MessagesAdapter(ArrayList(), this)
+
+        val listener = object : OnMessageClickListener {
+            override fun onMessageStatusLongClick(item: TextMessage?) {
+                val fragmentManager = supportFragmentManager.beginTransaction()
+                CometChat.getMessageReceipts(item!!.id, object : CometChat.CallbackListener<List<MessageReceipt>>() {
+                    override fun onSuccess(messageReceipts: List<MessageReceipt>) {
+                        val names = ArrayList<String>()
+                        messageReceipts.forEach {
+                            names.add(it.sender.name)
+                        }
+                        Log.d(TAG, "onSuccess: ${messageReceipts.size}")
+                        val newFragment = MessageInfoDialogFragment.newInstance(names)
+                        newFragment.show(fragmentManager, "dialog")
+                    }
+
+                    override fun onError(e: CometChatException) {
+                        Log.d(TAG, "onError: ${e.message} ")
+                    }
+                })
+
+            }
+        }
+        messagesAdapter = MessagesAdapter(ArrayList(), this, listener)
         messagesRecyclerView.adapter = messagesAdapter
         messagesRecyclerView.layoutManager = LinearLayoutManager(this)
         noMessagesGroup = findViewById(R.id.noMessagesGroup)
@@ -60,6 +86,7 @@ class GroupActivity : AppCompatActivity() {
         }
         registerMessageCallbacks()
     }
+
 
     private fun getGroupDetailsAndMessages() {
         // Get the details of the group, such as name, members and other data that may be used in the app later

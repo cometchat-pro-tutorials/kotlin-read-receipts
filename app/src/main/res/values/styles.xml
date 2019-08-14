@@ -24,4 +24,13 @@
         <item name="android:backgroundTint">@color/color_light_blue_darker</item>
     </style>
 
+    <style name="DialogTheme">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+    </style>
+
 </resources>

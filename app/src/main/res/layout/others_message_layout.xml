@@ -24,10 +24,13 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/messageLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:background="@drawable/others_chat_bubble"
+        android:clickable="true"
+        android:focusable="true"
         android:maxWidth="250dp"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="@id/avatarImageView"

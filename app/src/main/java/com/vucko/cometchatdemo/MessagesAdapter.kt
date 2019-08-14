@@ -1,6 +1,9 @@
 package com.vucko.cometchatdemo
 
+import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,14 +12,18 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.cometchat.pro.core.CometChat
+import com.cometchat.pro.exceptions.CometChatException
 import com.cometchat.pro.models.MessageReceipt
 import com.cometchat.pro.models.TextMessage
+import com.vucko.cometchatdemo.interfaces.OnMessageClickListener
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.my_message_layout.view.*
 
 
-class MessagesAdapter(var messages: MutableList<TextMessage?>, val context: Context) :
+class MessagesAdapter(var messages: MutableList<TextMessage?>, val context: Context, val listener: OnMessageClickListener) :
     RecyclerView.Adapter<MessageViewHolder>() {
+    val TAG = "MessagesAdapter"
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
         if (viewType == GeneralConstants.MY_MESSAGE) {
@@ -41,7 +48,7 @@ class MessagesAdapter(var messages: MutableList<TextMessage?>, val context: Cont
         // Check if the sender is the current user
         Glide.with(context).load(GeneralConstants.AVATARS_URL + messages[position]?.sender?.name)
             .into(holder.avatarImageView)
-        if(isCurrentUserMessage(messages[position])) {
+        if (isCurrentUserMessage(messages[position])) {
             if (messages[position]?.readAt == 0L) {
                 if (messages[position]?.deliveredAt == 0L) {
                     holder.messageStatusImageView.setImageResource(R.drawable.sent_tick)
@@ -52,7 +59,13 @@ class MessagesAdapter(var messages: MutableList<TextMessage?>, val context: Cont
                 holder.messageStatusImageView.setImageResource(R.drawable.read_double_tick)
             }
         }
+        holder.messageStatusImageView.setOnLongClickListener {
+            listener.onMessageStatusLongClick(messages[position])
+            true
+        }
+
     }
+
 
     private fun isCurrentUserMessage(message: TextMessage?): Boolean {
         val currentUserId = CometChat.getLoggedInUser()?.uid
@@ -65,8 +78,9 @@ class MessagesAdapter(var messages: MutableList<TextMessage?>, val context: Cont
     }
 
     fun notifyMessageChanged(messageReceipt: MessageReceipt?, status: MessageInfo) {
-        if(status == MessageInfo.DELIVERED) {
-            messages.find { message -> messageReceipt?.messageId == message?.id }?.deliveredAt = messageReceipt?.deliveredAt!!
+        if (status == MessageInfo.DELIVERED) {
+            messages.find { message -> messageReceipt?.messageId == message?.id }?.deliveredAt =
+                messageReceipt?.deliveredAt!!
         } else if (status == MessageInfo.READ) {
             messages.find { message -> messageReceipt?.messageId == message?.id }?.readAt = messageReceipt?.readAt!!
         }
