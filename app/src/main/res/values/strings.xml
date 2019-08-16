@@ -24,6 +24,9 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="no_one_has_read_this_message">None of the group members has read this message.</string>
+    <string name="no_one_has_read_this_message">None of the group members have read this message.</string>
+    <string name="this_message_was_delivered_to">This message was delivered to</string>
+    <string name="no_one_has_received_this_message">No one has received this message.</string>
+    <string name="no_one_else_has_received_this_message">No one else has received this message.</string>
 
 </resources>

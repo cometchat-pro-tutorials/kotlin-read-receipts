@@ -7,18 +7,21 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
+import com.cometchat.pro.models.MessageReceipt
 import com.vucko.cometchatdemo.R
 
 
 class MessageInfoDialogFragment : DialogFragment() {
 
-    private var names = ArrayList<String>()
+    private var namesDelivered = ArrayList<String>()
+    private var namesRead = ArrayList<String>()
     private val namesNull = ArrayList<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        names = arguments?.getStringArrayList("names") ?: namesNull
-        println(names)
+        namesDelivered = arguments?.getStringArrayList("namesDelivered") ?: namesNull
+        namesRead = arguments?.getStringArrayList("namesRead") ?: namesNull
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -28,35 +31,64 @@ class MessageInfoDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val closeDialogButton = view.findViewById<View>(R.id.closeDialogButton) as Button
-        val dialogBodyTextView = view.findViewById<View>(R.id.dialogBodyTextView) as TextView
-        dialogBodyTextView.text = makeDialogBody()
+        val readByTextView = view.findViewById<View>(R.id.readByTextView) as TextView
+        val deliveredTextView = view.findViewById<View>(R.id.deliveredTextView) as TextView
+        readByTextView.text = makeDialogText(
+            getString(R.string.this_message_was_read_by),
+            getString(R.string.no_one_has_read_this_message), namesRead
+        )
+
+        val noOneString: String = if (namesRead.size == 0) {
+            getString(R.string.no_one_has_received_this_message)
+        } else {
+            getString(R.string.no_one_else_has_received_this_message)
+        }
+
+        deliveredTextView.text = makeDialogText(
+            getString(R.string.this_message_was_delivered_to),
+            noOneString, namesDelivered
+        )
         closeDialogButton.setOnClickListener {
             dismiss()
         }
     }
 
-    private fun makeDialogBody(): String {
+    private fun makeDialogText(startString: String, noOneString: String, names: ArrayList<String>): String {
         var dialogBody: String
         if (names.size != 0) {
-            dialogBody = getString(R.string.this_message_was_read_by)
+            dialogBody = startString
             for (i in 0..(names.size - 1)) {
-                when (i) {
-                    names.size - 2 -> dialogBody = "$dialogBody ${names[i]} and"
-                    names.size - 1 -> dialogBody = "$dialogBody ${names[i]}."
-                    else -> dialogBody = "$dialogBody ${names[i]}, "
+                dialogBody = when (i) {
+                    names.size - 2 -> "$dialogBody ${names[i]} and"
+                    names.size - 1 -> "$dialogBody ${names[i]}."
+                    else -> "$dialogBody ${names[i]}, "
                 }
             }
         } else {
-            dialogBody = getString(R.string.no_one_has_read_this_message)
+            dialogBody = noOneString
         }
         return dialogBody
     }
 
     companion object {
-        fun newInstance(names: ArrayList<String>): MessageInfoDialogFragment {
+        fun newInstance(messageReceipts: List<MessageReceipt>): MessageInfoDialogFragment {
             val fragment = MessageInfoDialogFragment()
             val args = Bundle()
-            args.putStringArrayList("names", names)
+
+            val namesDelivered = ArrayList<String>()
+            val namesRead = ArrayList<String>()
+
+            messageReceipts.forEach {
+                if (it.receiptType == MessageReceipt.RECEIPT_TYPE_READ) {
+                    namesRead.add(it.sender.name)
+                }
+                if (it.receiptType == MessageReceipt.RECEIPT_TYPE_DELIVERED) {
+                    namesDelivered.add(it.sender.name)
+                }
+            }
+
+            args.putStringArrayList("namesDelivered", namesDelivered)
+            args.putStringArrayList("namesRead", namesRead)
             fragment.arguments = args
             return fragment
         }

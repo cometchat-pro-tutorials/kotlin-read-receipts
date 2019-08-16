@@ -56,12 +56,8 @@ class GroupActivity : AppCompatActivity() {
                 val fragmentManager = supportFragmentManager.beginTransaction()
                 CometChat.getMessageReceipts(item!!.id, object : CometChat.CallbackListener<List<MessageReceipt>>() {
                     override fun onSuccess(messageReceipts: List<MessageReceipt>) {
-                        val names = ArrayList<String>()
-                        messageReceipts.forEach {
-                            names.add(it.sender.name)
-                        }
                         Log.d(TAG, "onSuccess: ${messageReceipts.size}")
-                        val newFragment = MessageInfoDialogFragment.newInstance(names)
+                        val newFragment = MessageInfoDialogFragment.newInstance(messageReceipts)
                         newFragment.show(fragmentManager, "dialog")
                     }
 
