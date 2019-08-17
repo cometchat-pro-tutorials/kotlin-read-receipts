@@ -28,5 +28,6 @@
     <string name="this_message_was_delivered_to">This message was delivered to</string>
     <string name="no_one_has_received_this_message">No one has received this message.</string>
     <string name="no_one_else_has_received_this_message">No one else has received this message.</string>
+    <string name="joined">JOINED</string>
 
 </resources>

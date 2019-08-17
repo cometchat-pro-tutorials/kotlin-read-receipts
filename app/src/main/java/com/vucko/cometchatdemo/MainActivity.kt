@@ -42,6 +42,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        refreshGroupList()
+    }
+
     private fun openCreateGroupScreen() {
         val intent = Intent(this, CreateGroupActivity::class.java)
         startActivityForResult(intent, CREATE_GROUP)
@@ -50,7 +55,7 @@ class MainActivity : AppCompatActivity() {
     private fun refreshGroupList() {
         // Get all the groups visible to this user
         // Since we're working with public groups only, all users should see all of them
-        var groupRequest: GroupsRequest? = GroupsRequest.GroupsRequestBuilder().build()
+        val groupRequest: GroupsRequest? = GroupsRequest.GroupsRequestBuilder().build()
 
         groupRequest?.fetchNext(object : CometChat.CallbackListener<List<Group>>() {
             override fun onSuccess(p0: List<Group>?) {

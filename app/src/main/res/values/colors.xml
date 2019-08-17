@@ -7,6 +7,7 @@
     <color name="my_message_color">#0FCF78</color>
     <color name="other_message_color">#00A5FF</color>
     <color name="main_blue_color">#1B47DB</color>
+    <color name="accent_color">#DB1B63</color>
     <color name="button_pressed_color">#577AF3</color>
     <color name="button_disabled_color">#858585</color>
     <color name="color_light_blue_darker">#BDCCD7</color>

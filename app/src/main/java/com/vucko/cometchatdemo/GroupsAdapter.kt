@@ -2,21 +2,22 @@ package com.vucko.cometchatdemo
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.cometchat.pro.core.CometChat
 import com.cometchat.pro.exceptions.CometChatException
 import com.cometchat.pro.models.Group
 import kotlinx.android.synthetic.main.group_layout.view.*
 
-class GroupsAdapter(val groups: List<Group>?, val context: Context) : RecyclerView.Adapter<GroupViewHolder>() {
+class GroupsAdapter(private val groups: List<Group>?, val context: Context) : RecyclerView.Adapter<GroupViewHolder>() {
+    val TAG = "GroupsAdapterø"
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupViewHolder {
         return GroupViewHolder(LayoutInflater.from(context).inflate(R.layout.group_layout, parent, false))
     }
@@ -45,6 +46,21 @@ class GroupsAdapter(val groups: List<Group>?, val context: Context) : RecyclerVi
                 attemptJoinGroup(group)
             }
         }
+        CometChat.getUnreadMessageCountForGroup(
+            group.guid,
+            object : CometChat.CallbackListener<HashMap<String, Int>>() {
+                override fun onSuccess(stringIntegerHashMap: HashMap<String, Int>) {
+                    if (stringIntegerHashMap[group.guid] != null) {
+                        holder.unreadMessagesTextView.text = stringIntegerHashMap[group.guid].toString()
+                        holder.unreadMessagesTextView.visibility = View.VISIBLE
+                    }
+                    Log.d(TAG, "onSuccess: ${stringIntegerHashMap.size}")
+                }
+
+                override fun onError(e: CometChatException) {
+                    Log.d(TAG, "onError: ${e.message}")
+                }
+            })
     }
 
     private fun attemptJoinGroup(group: Group) {
@@ -84,4 +100,5 @@ class GroupViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val descriptionTextView: TextView = itemView.descriptionTextView
     val container: ConstraintLayout = itemView.container
     val joinedTextView: TextView = itemView.joinedTextView
+    val unreadMessagesTextView: TextView = itemView.unreadMessagesTextView
 }

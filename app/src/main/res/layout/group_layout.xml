@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:background="@android:color/white"
         android:clickable="true"
+        android:focusable="true"
         android:orientation="vertical"
         android:padding="@dimen/standard_padding">
 
@@ -20,7 +21,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingStart="8dp"
-            android:paddingEnd="8dp"
             android:text="Test group name"
             android:textColor="@color/color_dark_grey"
             android:textSize="16sp"
@@ -28,14 +28,36 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <me.grantland.widget.AutofitTextView
+            android:id="@+id/unreadMessagesTextView"
+            android:layout_width="23dp"
+            android:layout_height="23dp"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/custom_unread_badge"
+            android:gravity="center"
+            android:maxLines="1"
+            android:padding="1dp"
+            android:text="3"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/groupNameTextView"
+            app:layout_constraintStart_toEndOf="@id/groupNameTextView"
+            app:layout_constraintTop_toTopOf="@id/groupNameTextView"
+            app:minTextSize="10sp" />
+
+
         <TextView
             android:id="@+id/joinedTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="JOINED"
+            android:layout_marginStart="5dp"
+            android:text="@string/joined"
             android:textColor="@android:color/holo_green_light"
             android:textStyle="bold"
-            app:layout_constraintLeft_toRightOf="@id/groupNameTextView"
+            app:layout_constraintBottom_toBottomOf="@id/groupNameTextView"
+            app:layout_constraintStart_toEndOf="@id/unreadMessagesTextView"
             app:layout_constraintTop_toTopOf="@id/groupNameTextView" />
 
         <TextView
