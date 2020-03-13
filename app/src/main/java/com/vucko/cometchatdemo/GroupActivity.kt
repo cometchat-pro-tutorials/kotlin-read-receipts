@@ -122,11 +122,13 @@ class GroupActivity : AppCompatActivity() {
 
     private fun registerMessageCallbacks() {
         CometChat.addMessageListener(messageReadReceiptListenerId, object : CometChat.MessageListener() {
-            override fun onMessageDelivered(messageReceipt: MessageReceipt?) {
+
+            override fun onMessagesDelivered(messageReceipt: MessageReceipt?) {
                 notifyMessageInfoChanged(messageReceipt, MessageInfo.DELIVERED)
+
             }
 
-            override fun onMessageRead(messageReceipt: MessageReceipt?) {
+            override fun onMessagesRead(messageReceipt: MessageReceipt?) {
                 notifyMessageInfoChanged(messageReceipt, MessageInfo.READ)
             }
         })
@@ -138,7 +140,7 @@ class GroupActivity : AppCompatActivity() {
 
     private fun markMessageAsReadIfNeeded(message: TextMessage?) {
         if (message?.readAt == 0L && !message.sender.uid.equals(CometChat.getLoggedInUser().uid, ignoreCase = true)) {
-            CometChat.markMessageAsRead(message)
+            CometChat.markAsRead(message.id,message.receiverUid,message.receiverType)
         }
     }
 
@@ -155,7 +157,7 @@ class GroupActivity : AppCompatActivity() {
             val messageType: String = CometChatConstants.MESSAGE_TYPE_TEXT
             val receiverType: String = CometChatConstants.RECEIVER_TYPE_GROUP
 
-            val textMessage = TextMessage(receiverID, text, messageType, receiverType)
+            val textMessage = TextMessage(receiverID, text, receiverType)
 
             CometChat.sendMessage(textMessage, object : CometChat.CallbackListener<TextMessage>() {
                 override fun onSuccess(p0: TextMessage?) {
